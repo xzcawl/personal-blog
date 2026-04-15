@@ -53,6 +53,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       />
     </label>
     <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">更新日期（可选）</span>
+      <input
+        id="field-updated"
+        type="date"
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"
+      />
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
       <span style="font-weight: 600; color: var(--text);">正文（Markdown）</span>
       <textarea
         id="field-body"
@@ -90,6 +98,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const slugEl = document.getElementById('field-slug');
       const descEl = document.getElementById('field-description');
       const dateEl = document.getElementById('field-date');
+      const updatedEl = document.getElementById('field-updated');
       const bodyEl = document.getElementById('field-body');
       if (!titleEl || !slugEl || !dateEl || !bodyEl) return null;
 
@@ -97,6 +106,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const slug = slugEl.value.trim().toLowerCase();
       const description = descEl ? descEl.value.trim() : '';
       const date = dateEl.value;
+      const updated = updatedEl ? updatedEl.value : '';
       const body = bodyEl.value.trim();
 
       if (!title || !slug || !date || !body) return null;
@@ -104,10 +114,12 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       const descLine = description
         ? `description: "${escapeYaml(description)}"\n`
         : '';
+      const updatedLine = updated ? `updated: ${updated}\n` : '';
       const content =
         '---\n' +
         `title: "${escapeYaml(title)}"\n` +
         `date: ${date}\n` +
+        updatedLine +
         descLine +
         '---\n\n' +
         body +
@@ -167,6 +179,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const dateInput = document.getElementById('field-date');
     if (dateInput && 'value' in dateInput && !dateInput.value) {
       dateInput.value = today;
+    }
+    const updatedInput = document.getElementById('field-updated');
+    if (updatedInput && 'value' in updatedInput && !updatedInput.value) {
+      updatedInput.value = today;
     }
   </script>
 </BaseLayout>
