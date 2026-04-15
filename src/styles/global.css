@@ -13,6 +13,16 @@
   background: var(--bg);
 }
 
+:root[data-theme='light'] {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --text: #1a2433;
+  --muted: #4b617b;
+  --accent: #1769aa;
+  --accent-hover: #0d4f86;
+  --border: #d8e0ea;
+}
+
 *,
 *::before,
 *::after {
@@ -22,6 +32,9 @@
 body {
   margin: 0;
   min-height: 100vh;
+  color: var(--text);
+  background: var(--bg);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 a {
@@ -75,4 +88,34 @@ pre {
 pre code {
   padding: 0;
   background: none;
+}
+
+.site-header {
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.site-nav {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.theme-toggle {
+  margin-left: auto;
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.theme-toggle:hover {
+  background: var(--surface);
 }
