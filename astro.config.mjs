@@ -5,4 +5,5 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
   site: 'https://xzcawl.github.io',
   base: '/personal-blog',
+  outDir: 'docs',
 });
