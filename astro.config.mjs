@@ -4,6 +4,6 @@ import { defineConfig } from 'astro/config';
 // 用户站 username.github.io 请设为 base: '/'
 export default defineConfig({
   site: 'https://xzcawl.github.io',
-  base: '/personal-blog',
+  base: '/personal-blog/',
   outDir: 'docs',
 });
