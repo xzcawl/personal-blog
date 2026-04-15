@@ -1,0 +1,172 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="发表文章" description="撰写并下载 Markdown 文章">
+  <h1>发表文章</h1>
+  <p>
+    GitHub Pages 为静态托管，新文章需以 Markdown 文件形式加入仓库。在下方填写内容后下载文件，将文件放到
+    <code>src/content/blog/</code> 中并推送即可。
+  </p>
+
+  <form
+    id="publish-form"
+    style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"
+  >
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">标题</span>
+      <input
+        id="field-title"
+        type="text"
+        required
+        placeholder="文章标题"
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"
+      />
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">URL 文件名（英文、连字符）</span>
+      <input
+        id="field-slug"
+        type="text"
+        required
+        pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
+        placeholder="my-new-post"
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"
+      />
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">摘要（可选）</span>
+      <input
+        id="field-description"
+        type="text"
+        placeholder="一句话简介"
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"
+      />
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">发布日期</span>
+      <input
+        id="field-date"
+        type="date"
+        required
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"
+      />
+    </label>
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">正文（Markdown）</span>
+      <textarea
+        id="field-body"
+        required
+        rows="16"
+        placeholder="在这里写 Markdown 正文..."
+        style="padding: 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.95rem; font-family: ui-monospace, monospace; resize: vertical;"
+      ></textarea>
+    </label>
+    <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;">
+      <button
+        type="submit"
+        style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: none; background: var(--accent); color: #0f1419; font-weight: 600; cursor: pointer; font-size: 1rem;"
+      >
+        下载 .md 文件
+      </button>
+      <button
+        type="button"
+        id="btn-copy"
+        style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-size: 1rem;"
+      >
+        复制全文
+      </button>
+    </div>
+    <p id="msg" style="min-height: 1.5rem; margin: 0; font-size: 0.9rem;"></p>
+  </form>
+
+  <script>
+    function escapeYaml(s) {
+      return s.replace(/"/g, '\\"');
+    }
+
+    function buildMarkdown() {
+      const titleEl = document.getElementById('field-title');
+      const slugEl = document.getElementById('field-slug');
+      const descEl = document.getElementById('field-description');
+      const dateEl = document.getElementById('field-date');
+      const bodyEl = document.getElementById('field-body');
+      if (!titleEl || !slugEl || !dateEl || !bodyEl) return null;
+
+      const title = titleEl.value.trim();
+      const slug = slugEl.value.trim().toLowerCase();
+      const description = descEl ? descEl.value.trim() : '';
+      const date = dateEl.value;
+      const body = bodyEl.value.trim();
+
+      if (!title || !slug || !date || !body) return null;
+
+      const descLine = description
+        ? `description: "${escapeYaml(description)}"\n`
+        : '';
+      const content =
+        '---\n' +
+        `title: "${escapeYaml(title)}"\n` +
+        `date: ${date}\n` +
+        descLine +
+        '---\n\n' +
+        body +
+        '\n';
+      return { filename: slug + '.md', content };
+    }
+
+    const form = document.getElementById('publish-form');
+    const msg = document.getElementById('msg');
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const result = buildMarkdown();
+      if (!result || !msg) {
+        if (msg) {
+          msg.textContent =
+            '请填写所有必填项，且文件名仅使用小写字母、数字与连字符。';
+          msg.style.color = '#e88';
+        }
+        return;
+      }
+      const blob = new Blob([result.content], {
+        type: 'text/markdown;charset=utf-8',
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = result.filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      msg.textContent =
+        '已下载 ' +
+        result.filename +
+        '，请放入 src/content/blog/ 后 git push。';
+      msg.style.color = 'var(--muted)';
+    });
+
+    document.getElementById('btn-copy')?.addEventListener('click', async () => {
+      const result = buildMarkdown();
+      if (!result || !msg) {
+        if (msg) {
+          msg.textContent = '请填写所有必填项。';
+          msg.style.color = '#e88';
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(result.content);
+        msg.textContent = '已复制到剪贴板。';
+        msg.style.color = 'var(--muted)';
+      } catch {
+        msg.textContent = '复制失败，请使用下载文件。';
+        msg.style.color = '#e88';
+      }
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    const dateInput = document.getElementById('field-date');
+    if (dateInput && 'value' in dateInput && !dateInput.value) {
+      dateInput.value = today;
+    }
+  </script>
+</BaseLayout>
