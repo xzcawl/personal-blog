@@ -5,14 +5,27 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 <BaseLayout title="发表文章" description="撰写并下载 Markdown 文章">
   <h1>发表文章</h1>
   <p>
-    GitHub Pages 为静态托管，新文章需以 Markdown 文件形式加入仓库。在下方填写内容后下载文件，将文件放到
-    <code>src/content/blog/</code> 中，然后运行 <code>npm run publish</code> 一键构建并推送。
+    GitHub Pages 为静态托管，新文章需以 Markdown 文件形式加入仓库。在下方选择分类、填写内容后下载文件，将文件放到
+    <code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）或
+    <code>src/content/blog/life/</code>（生活）中，然后运行 <code>npm run publish</code> 一键构建并推送。
   </p>
 
   <form
     id="publish-form"
     style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"
   >
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">分类目录</span>
+      <select
+        id="field-category"
+        required
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 320px;"
+      >
+        <option value="quant">量化（quant）</option>
+        <option value="travel">旅游（travel）</option>
+        <option value="life">生活（life）</option>
+      </select>
+    </label>
     <label style="display: flex; flex-direction: column; gap: 0.35rem;">
       <span style="font-weight: 600; color: var(--text);">标题</span>
       <input
@@ -96,14 +109,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     function buildMarkdown() {
       const titleEl = document.getElementById('field-title');
       const slugEl = document.getElementById('field-slug');
+      const categoryEl = document.getElementById('field-category');
       const descEl = document.getElementById('field-description');
       const dateEl = document.getElementById('field-date');
       const updatedEl = document.getElementById('field-updated');
       const bodyEl = document.getElementById('field-body');
-      if (!titleEl || !slugEl || !dateEl || !bodyEl) return null;
+      if (!titleEl || !slugEl || !categoryEl || !dateEl || !bodyEl) return null;
 
       const title = titleEl.value.trim();
       const slug = slugEl.value.trim().toLowerCase();
+      const category = categoryEl.value;
       const description = descEl ? descEl.value.trim() : '';
       const date = dateEl.value;
       const updated = updatedEl ? updatedEl.value : '';
@@ -124,7 +139,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         '---\n\n' +
         body +
         '\n';
-      return { filename: slug + '.md', content };
+      return { filename: slug + '.md', content, category };
     }
 
     const form = document.getElementById('publish-form');
@@ -152,7 +167,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       msg.textContent =
         '已下载 ' +
         result.filename +
-        '，请放入 src/content/blog/ 后 git push。';
+        '，请放入 src/content/blog/' +
+        result.category +
+        '/ 后运行 npm run publish（或自行 git push）。';
       msg.style.color = 'var(--muted)';
     });
 

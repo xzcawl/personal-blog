@@ -5,9 +5,39 @@ import { getCollection } from 'astro:content';
 const all = await getCollection('blog');
 const getUpdatedTime = (post: (typeof all)[number]) =>
   (post.data.updated ?? post.data.date).getTime();
+
 const posts = all
   .filter((p) => !p.data.draft)
   .sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
+
+const categoryOrder = ['quant', 'travel', 'life'] as const;
+const categoryLabels: Record<(typeof categoryOrder)[number], string> = {
+  quant: '量化',
+  travel: '旅游',
+  life: '生活',
+};
+
+function categoryFromSlug(slug: string): (typeof categoryOrder)[number] | 'other' {
+  const i = slug.indexOf('/');
+  if (i === -1) return 'other';
+  const prefix = slug.slice(0, i);
+  if (prefix === 'quant' || prefix === 'travel' || prefix === 'life') return prefix;
+  return 'other';
+}
+
+const grouped = new Map<string, typeof posts>();
+for (const key of categoryOrder) grouped.set(key, []);
+grouped.set('other', []);
+
+for (const p of posts) {
+  const cat = categoryFromSlug(p.slug);
+  const bucket = cat === 'other' ? 'other' : cat;
+  grouped.get(bucket)!.push(p);
+}
+
+for (const [, list] of grouped) {
+  list.sort((a, b) => getUpdatedTime(b) - getUpdatedTime(a));
+}
 
 const base = import.meta.env.BASE_URL;
 ---
@@ -15,32 +45,78 @@ const base = import.meta.env.BASE_URL;
 <BaseLayout title="文章列表" description="个人博客文章列表">
   <h1>文章列表</h1>
   <p style="margin-bottom: 2rem;">
-    共 {posts.length} 篇。要发布新文章，请前往
-    <a href={`${base}publish`}>发表文章</a>。
+    共 {posts.length} 篇。请将 Markdown 放到对应目录后执行 <code>npm run publish</code> 构建并推送：
+    <code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）、
+    <code>src/content/blog/life/</code>（生活）。也可用
+    <a href={`${base}publish`}>发表文章</a> 在线编写并下载 .md。
   </p>
-  <ul style="list-style: none; padding: 0; margin: 0;">
-    {
-      posts.map((post) => (
-        <li
-          style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"
-        >
-          <a
-            href={`${base}blog/${post.slug}/`}
-            style="font-size: 1.1rem; font-weight: 600; color: var(--text);"
-          >
-            {post.data.title}
-          </a>
-          {post.data.description && (
-            <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">{post.data.description}</p>
-          )}
-          <time
-            datetime={(post.data.updated ?? post.data.date).toISOString()}
-            style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);"
-          >
-            更新于 {(post.data.updated ?? post.data.date).toLocaleDateString('zh-CN')}
-          </time>
-        </li>
-      ))
-    }
-  </ul>
+  {
+    categoryOrder.map((key) => {
+      const list = grouped.get(key) ?? [];
+      if (list.length === 0) return null;
+      return (
+        <section style="margin-bottom: 2.5rem;">
+          <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);">
+            {categoryLabels[key]}
+            <span style="font-weight: 400; color: var(--muted); font-size: 0.9rem;">
+              （{key}）
+            </span>
+          </h2>
+          <ul style="list-style: none; padding: 0; margin: 0;">
+            {list.map((post) => (
+              <li
+                style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"
+              >
+                <a
+                  href={`${base}blog/${post.slug}/`}
+                  style="font-size: 1.1rem; font-weight: 600; color: var(--text);"
+                >
+                  {post.data.title}
+                </a>
+                {post.data.description && (
+                  <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">{post.data.description}</p>
+                )}
+                <time
+                  datetime={(post.data.updated ?? post.data.date).toISOString()}
+                  style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);"
+                >
+                  更新于 {(post.data.updated ?? post.data.date).toLocaleDateString('zh-CN')}
+                </time>
+              </li>
+            ))}
+          </ul>
+        </section>
+      );
+    })
+  }
+  {
+    (grouped.get('other')?.length ?? 0) > 0 && (
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);">其他</h2>
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          {(grouped.get('other') ?? []).map((post) => (
+            <li
+              style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"
+            >
+              <a
+                href={`${base}blog/${post.slug}/`}
+                style="font-size: 1.1rem; font-weight: 600; color: var(--text);"
+              >
+                {post.data.title}
+              </a>
+              {post.data.description && (
+                <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">{post.data.description}</p>
+              )}
+              <time
+                datetime={(post.data.updated ?? post.data.date).toISOString()}
+                style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);"
+              >
+                更新于 {(post.data.updated ?? post.data.date).toLocaleDateString('zh-CN')}
+              </time>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
 </BaseLayout>

@@ -11,11 +11,20 @@
 </a> <a href="/personal-blog/">文章列表</a> <a href="/personal-blog/publish">发表文章</a> <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换主题">
 切换亮/暗
 </button> </nav> </header> <main>  <h1>文章列表</h1> <p style="margin-bottom: 2rem;">
-共 2 篇。要发布新文章，请前往
-<a href="/personal-blog/publish">发表文章</a>。
-</p> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/quant-trading/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> 量化交易摸索 </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">个人量化交易学习交易手册</p> <time datetime="2026-04-15T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
-更新于 2026/4/15 </time> </li><li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/hello-world/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> Hello World </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">欢迎使用本博客模板的第一篇示例文章。</p> <time datetime="2026-04-14T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
-更新于 2026/4/14 </time> </li> </ul>  </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
+共 3 篇。请将 Markdown 放到对应目录后执行 <code>npm run publish</code> 构建并推送：
+<code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）、
+<code>src/content/blog/life/</code>（生活）。也可用
+<a href="/personal-blog/publish">发表文章</a> 在线编写并下载 .md。
+</p> <section style="margin-bottom: 2.5rem;"> <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);"> 量化 <span style="font-weight: 400; color: var(--muted); font-size: 0.9rem;">
+（quant）
+</span> </h2> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/quant/quant-trading/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> 量化交易摸索 </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">个人量化交易学习交易手册</p> <time datetime="2026-04-15T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
+更新于 2026/4/15 </time> </li> </ul> </section><section style="margin-bottom: 2.5rem;"> <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);"> 旅游 <span style="font-weight: 400; color: var(--muted); font-size: 0.9rem;">
+（travel）
+</span> </h2> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/travel/hezhou/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> 佛山-贺州亲子推车游 </a>  <time datetime="2026-04-22T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
+更新于 2026/4/22 </time> </li> </ul> </section><section style="margin-bottom: 2.5rem;"> <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);"> 生活 <span style="font-weight: 400; color: var(--muted); font-size: 0.9rem;">
+（life）
+</span> </h2> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/life/hello-world/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> Hello World </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">欢迎使用本博客模板的第一篇示例文章。</p> <time datetime="2026-04-14T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
+更新于 2026/4/14 </time> </li> </ul> </section> </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
 由 Astro 构建 · 部署在 GitHub Pages
 </footer> <script>
       const root = document.documentElement;
