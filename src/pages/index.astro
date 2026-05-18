@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import BlogFooter from '../components/BlogFooter.astro';
 import { getCollection } from 'astro:content';
 
 const all = await getCollection('blog');
@@ -119,4 +120,5 @@ const base = import.meta.env.BASE_URL;
       </section>
     )
   }
+  <BlogFooter />
 </BaseLayout>

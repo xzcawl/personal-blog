@@ -1,0 +1,165 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="jq2qmt 工具：聚宽策略自动转 QMT，含 API 兼容层、定时调度与 GBK 双版本发布。"><title>聚宽策略一键搬进QMT？我写了个工具，试了一下还挺香</title><link rel="icon" type="image/svg+xml" href="/personal-blog/favicon.svg"><script>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        const theme = saved || (prefersLight ? 'light' : 'dark');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script><style>:root{--bg: #0f1419;--surface: #1a2332;--text: #e7edf4;--muted: #8b9cb3;--accent: #5b9fd4;--accent-hover: #7eb8e8;--border: #2a3a4d;--radius: 10px;font-family:Segoe UI,system-ui,-apple-system,sans-serif;line-height:1.6;color:var(--text);background:var(--bg)}:root[data-theme=light]{--bg: #f6f8fb;--surface: #ffffff;--text: #1a2433;--muted: #4b617b;--accent: #1769aa;--accent-hover: #0d4f86;--border: #d8e0ea}*,*:before,*:after{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:var(--bg);transition:background-color .2s ease,color .2s ease}a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hover);text-decoration:underline}main{max-width:720px;margin:0 auto;padding:2rem 1.25rem 4rem}h1{font-size:1.75rem;font-weight:600;letter-spacing:-.02em;margin:0 0 1rem}h2{font-size:1.2rem;margin:1.75rem 0 .75rem}p{margin:.75rem 0;color:var(--muted)}code{font-family:ui-monospace,Cascadia Code,monospace;font-size:.9em;background:var(--surface);padding:.15em .4em;border-radius:4px}pre{background:var(--surface);padding:1rem;border-radius:var(--radius);overflow-x:auto}pre code{padding:0;background:none}.site-header{border-bottom:1px solid var(--border);background:var(--surface)}.site-nav{max-width:720px;margin:0 auto;padding:1rem 1.25rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}.theme-toggle{margin-left:auto;padding:.4rem .8rem;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.9rem}.theme-toggle:hover{background:var(--surface)}
+.blog-footer[data-astro-cid-pasjzvzq]{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center}.blog-footer__label[data-astro-cid-pasjzvzq]{margin:0 0 .35rem;font-size:.85rem;color:var(--muted)}.blog-footer__name[data-astro-cid-pasjzvzq]{margin:0;font-size:1rem;font-weight:600;color:var(--text);letter-spacing:.02em}
+.prose[data-astro-cid-7jjqptxk] h1,.prose[data-astro-cid-7jjqptxk] h2,.prose[data-astro-cid-7jjqptxk] h3,.prose[data-astro-cid-7jjqptxk] h4,.prose[data-astro-cid-7jjqptxk] h5,.prose[data-astro-cid-7jjqptxk] h6{color:var(--text);margin-top:1.75rem;margin-bottom:.75rem;line-height:1.35}.prose[data-astro-cid-7jjqptxk] h2{color:var(--text)}.prose[data-astro-cid-7jjqptxk] p{color:var(--text);margin:.8rem 0}.prose[data-astro-cid-7jjqptxk] li{color:var(--text);margin:.25rem 0}.prose[data-astro-cid-7jjqptxk] ul,.prose[data-astro-cid-7jjqptxk] ol{padding-left:1.25rem;margin:.75rem 0}.prose[data-astro-cid-7jjqptxk] a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}.prose[data-astro-cid-7jjqptxk] a:hover{color:var(--accent-hover)}.prose[data-astro-cid-7jjqptxk] blockquote{margin:1rem 0;padding:.5rem 1rem;border-left:4px solid var(--border);background:var(--surface);color:var(--muted)}.prose[data-astro-cid-7jjqptxk] hr{border:0;border-top:1px solid var(--border);margin:1.5rem 0}.prose[data-astro-cid-7jjqptxk] table{width:100%;border-collapse:collapse;margin:1rem 0;display:block;overflow-x:auto}.prose[data-astro-cid-7jjqptxk] th,.prose[data-astro-cid-7jjqptxk] td{border:1px solid var(--border);padding:.5rem .75rem;text-align:left}.prose[data-astro-cid-7jjqptxk] th{background:var(--surface);color:var(--text)}.prose[data-astro-cid-7jjqptxk] code{font-family:ui-monospace,Cascadia Code,monospace;font-size:.9em;background:var(--surface);padding:.15em .4em;border-radius:4px}.prose[data-astro-cid-7jjqptxk] pre{background:var(--surface);padding:1rem;border-radius:var(--radius);overflow-x:auto}.prose[data-astro-cid-7jjqptxk] pre code{padding:0;background:none}.prose[data-astro-cid-7jjqptxk] img{max-width:100%;height:auto;border-radius:var(--radius)}.prose[data-astro-cid-7jjqptxk] input[type=checkbox]{transform:translateY(1px)}
+</style></head> <body> <header class="site-header"> <nav class="site-nav"> <a href="/personal-blog/" style="font-weight: 600; color: var(--text); text-decoration: none;">
+我的博客
+</a> <a href="/personal-blog/">文章列表</a> <a href="/personal-blog/publish">发表文章</a> <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换主题">
+切换亮/暗
+</button> </nav> </header> <main>  <article data-astro-cid-7jjqptxk> <p style="margin-bottom: 0.5rem;" data-astro-cid-7jjqptxk> <a href="/personal-blog/" data-astro-cid-7jjqptxk>← 返回列表</a> </p> <h1 data-astro-cid-7jjqptxk>聚宽策略一键搬进QMT？我写了个工具，试了一下还挺香</h1> <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;" data-astro-cid-7jjqptxk>
+发布于
+<time datetime="2026-05-18T00:00:00.000Z" data-astro-cid-7jjqptxk> 2026年5月18日 </time>  </p> <div class="prose" data-astro-cid-7jjqptxk> <p>这几天就干了一件事——把自己在聚宽上跑了挺久的策略，搬到了 QMT 里。</p>
+<p>起因很朴素：想直接实盘的环境部署。但问题是，聚宽和QMT的代码差异真的很大，手改一遍相当于重写，又懒又容易出错。</p>
+<p>于是就索性自己写了个转换工具，叫 <strong>jq2qmt</strong>，专门干这件事。</p>
+<hr>
+<h2 id="为什么不直接手改">为什么不直接手改？</h2>
+<p>聚宽策略和QMT策略，表面上都是Python，但骨子里差了一大截：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>差异点</th><th>聚宽</th><th>QMT</th></tr></thead><tbody><tr><td>入口函数</td><td><code>initialize</code> + <code>handle_data</code></td><td><code>init</code> + <code>handlebar</code></td></tr><tr><td>定时任务</td><td><code>run_daily(func, time='09:31')</code></td><td>手写时间判断逻辑</td></tr><tr><td>数据接口</td><td><code>get_price</code>、<code>attribute_history</code></td><td><code>ContextInfo.get_market_data_ex</code></td></tr><tr><td>持仓/资金</td><td><code>context.portfolio.cash</code></td><td><code>get_trade_detail_data(acc, ...)</code></td></tr><tr><td>证券代码</td><td><code>000001.XSHE</code></td><td><code>000001.SZ</code></td></tr><tr><td>编码要求</td><td>UTF-8</td><td>GBK（QMT 3.6内置Python）</td></tr></tbody></table>
+<p>每一行涉及数据或下单的代码几乎都要改。手改一遍还好，但改完之后聚宽原版再更新，又要重新改一遍。</p>
+<hr>
+<h2 id="jq2qmt-干了什么">jq2qmt 干了什么</h2>
+<p>这个工具的核心逻辑是：<strong>把聚宽的代码”外科手术式”处理，然后拼上一个兼容层</strong>。</p>
+<h3 id="1-源码清洗">1. 源码清洗</h3>
+<p>自动删掉这些聚宽专有的东西：</p>
+<ul>
+<li><code>from jqdata import *</code></li>
+<li><code>set_option</code>、<code>set_slippage</code>、<code>set_order_cost</code></li>
+<li><code>run_daily(...)</code> 注册语句</li>
+<li><code>import numpy</code>、<code>import pandas</code> 这类在QMT里不需要手动导的</li>
+</ul>
+<p>只保留从 <code>def initialize(context):</code> 开始往后的策略逻辑，就像把包装纸撕掉，留下芯子。</p>
+<h3 id="2-自动生成定时调度">2. 自动生成定时调度</h3>
+<p>聚宽里写 <code>run_daily(my_func, time='09:31')</code> 这样的语句，工具会扫描出来，自动生成QMT对应的 <code>handlebar</code> 里的时间窗口判断：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">def</span><span style="color:#B392F0"> handlebar</span><span style="color:#E1E4E8">(ContextInfo):</span></span>
+<span class="line"><span style="color:#79B8FF">    ...</span></span>
+<span class="line"><span style="color:#E1E4E8">    _run_scheduled(ctx, </span><span style="color:#9ECBFF">"09:31"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"09:41"</span><span style="color:#E1E4E8">, </span><span style="color:#9ECBFF">"my_func"</span><span style="color:#E1E4E8">, my_func)</span></span>
+<span class="line"></span></code></pre>
+<p>默认时间窗口10分钟，避免分钟K线只触发一次然后错过。</p>
+<h3 id="3-api兼容层shim">3. API兼容层（shim）</h3>
+<p>这是最核心的部分——内置了一套聚宽API的QMT映射：</p>
+<ul>
+<li><code>get_price</code> → <code>ContextInfo.get_market_data_ex</code></li>
+<li><code>attribute_history</code> → 包装了get_price的单股多字段版</li>
+<li><code>context.portfolio.positions</code> → <code>get_trade_detail_data</code> 拿持仓后转格式</li>
+<li><code>get_current_data()</code> → <code>get_full_tick</code> 实时行情</li>
+<li><code>order(security, amount)</code> → <code>passorder</code>（带成交校验，失败会打日志）</li>
+<li>代码格式：<code>000001.XSHE</code> ↔ <code>000001.SZ</code> 互转</li>
+</ul>
+<p>这层shim直接内嵌到生成的文件里，不依赖任何外部包，QMT直接能跑。</p>
+<h3 id="4-买入资金校验补丁">4. 买入资金校验补丁</h3>
+<p>这个细节比较实用：QMT回测里，13:10的市价买单实际成交价会比last价高1.5%~3%（滑点+佣金叠加），导致明明算够钱但QMT给你拒单，日志显示”成功”但操作明细里没有委托。</p>
+<p>工具会自动把旧的下单逻辑补丁掉，换成用 <code>get_full_tick</code> 拿卖一价估算验资单价，向下取整到100股批次，避免这个坑。</p>
+<h3 id="5-双版本输出">5. 双版本输出</h3>
+<ul>
+<li><code>xxx_QMT_dev.py</code>：UTF-8，在Cursor/VSCode里正常编辑</li>
+<li><code>xxx_QMT.py</code>：GBK，QMT直接读这个</li>
+<li>Emoji自动替换：<code>✅</code> → <code>[Y]</code>，<code>❌</code> → <code>[N]</code>（GBK不支持emoji）</li>
+<li>中文 <code>record(收益=...)</code> 参数名自动替换为MD5哈希的ASCII名</li>
+</ul>
+<hr>
+<h2 id="用起来怎样">用起来怎样</h2>
+<p>三步走：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="powershell"><code><span class="line"><span style="color:#6A737D"># 第一步：首次配置依赖（QMT自带Python没有numpy/pandas）</span></span>
+<span class="line"><span style="color:#E1E4E8">python qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">jq2qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">install_deps.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 第二步：转换</span></span>
+<span class="line"><span style="color:#E1E4E8">python qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">jq2qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">convert.py my_strategy.py </span><span style="color:#F97583">--</span><span style="color:#E1E4E8">name </span><span style="color:#9ECBFF">"我的ETF策略"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D"># 第三步：发布到QMT</span></span>
+<span class="line"><span style="color:#E1E4E8">python qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">jq2qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">deploy.py qmt</span><span style="color:#F97583">/</span><span style="color:#E1E4E8">my_strategy_QMT_dev.py</span></span>
+<span class="line"></span></code></pre>
+<p>转换完之后在 <code>qmt/</code> 目录下生成两个文件，去QMT里关闭重开策略就能用。</p>
+<p>如果改了策略逻辑，改 <code>_dev.py</code> 那个，然后重新 <code>deploy</code> 就好。</p>
+<hr>
+<h2 id="哪些聚宽api还没支持">哪些聚宽API还没支持</h2>
+<p>目前已支持的主要是：</p>
+<p>✅ <code>get_price</code> / <code>attribute_history</code><br>
+✅ <code>get_current_data</code> / <code>get_security_info</code><br>
+✅ <code>get_all_securities</code>（ETF/LOF）<br>
+✅ <code>get_extras</code>（基金净值）<br>
+✅ <code>get_trade_days</code><br>
+✅ <code>order</code>（按股数买卖）<br>
+✅ <code>log</code> / <code>record</code> / <code>g</code> / <code>context.portfolio</code></p>
+<p>还没做的：</p>
+<p>❌ <code>order_target_value</code>、<code>order_target_percent</code><br>
+❌ <code>get_fundamentals</code>（财务数据）<br>
+❌ <code>get_index_stocks</code>、<code>get_industry_stocks</code><br>
+❌ 期货、融资融券相关</p>
+<p>如果策略用到这些，目前还得手改或者扩展shim文件。</p>
+<hr>
+<h2 id="还有一个日志对账问题">还有一个日志对账问题</h2>
+<p>这个我踩过坑，记录一下：</p>
+<p>QMT回测里，日志上的时间戳是<strong>墙钟时间</strong>（你电脑当前时刻），不是策略模拟的交易日。比如你今天跑2023年的回测，日志里打的是<code>【2026-05-18 20:30】</code>，但实际模拟交易日在2023年。</p>
+<p>要看真正的成交日，得看操作明细里的时间，或者看日志里 <code>[YYYY-MM-DD HH:MM]</code> 格式的括号时间——工具生成的策略里已经在关键日志里加了这个格式。</p>
+<hr>
+<h2 id="适合什么场景">适合什么场景</h2>
+<ul>
+<li>聚宽上已经跑通、想搬到QMT接近实盘的策略</li>
+<li>策略里主要用到价格、ETF净值、持仓、基础下单这些API</li>
+<li>不想每次更新策略都手改一遍QMT版</li>
+</ul>
+<p>不适合：</p>
+<ul>
+<li>大量依赖财务数据、行业分类的选股策略（shim还不完整）</li>
+<li>期货策略</li>
+</ul>
+<hr>
+<p>工具源码在仓库 <code>qmt/jq2qmt/</code> 目录，自用为主。<a href="jq2qmt.7z">下载 jq2qmt 工具包</a>（与本文同路径）。有类似需求的朋友可以参考思路，或在公众号 <strong>尿布与K线 · NappyQuanter</strong> 私信回复 <code>jq2qmt</code> 获取说明，再按自己的策略结构改改 shim，应该能省不少力气。</p>
+<hr>
+<p><em>以上内容为个人工具记录，不构成任何投资建议。量化有风险，实盘需谨慎。</em></p> </div> <aside class="blog-footer" aria-label="公众号" data-astro-cid-pasjzvzq> <p class="blog-footer__label" data-astro-cid-pasjzvzq>欢迎关注公众号</p> <p class="blog-footer__name" data-astro-cid-pasjzvzq>尿布与K线 · NappyQuanter</p> </aside>  </article>  </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
+由 Astro 构建 · 部署在 GitHub Pages
+</footer> <script>
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      btn?.addEventListener('click', () => {
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        localStorage.setItem('theme', next);
+      });
+    </script> </body> </html> 

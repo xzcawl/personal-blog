@@ -1,0 +1,143 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="description" content="五福 ETF 轮动策略防未来函数修复实录：ETF 可见性、信号日对齐、回测与研究环境对照。"><title>量化策略“去未来函数”全过程实录：从“漂亮回测”到可信实盘</title><link rel="icon" type="image/svg+xml" href="/personal-blog/favicon.svg"><script>
+      (() => {
+        const saved = localStorage.getItem('theme');
+        const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+        const theme = saved || (prefersLight ? 'light' : 'dark');
+        document.documentElement.dataset.theme = theme;
+      })();
+    </script><style>:root{--bg: #0f1419;--surface: #1a2332;--text: #e7edf4;--muted: #8b9cb3;--accent: #5b9fd4;--accent-hover: #7eb8e8;--border: #2a3a4d;--radius: 10px;font-family:Segoe UI,system-ui,-apple-system,sans-serif;line-height:1.6;color:var(--text);background:var(--bg)}:root[data-theme=light]{--bg: #f6f8fb;--surface: #ffffff;--text: #1a2433;--muted: #4b617b;--accent: #1769aa;--accent-hover: #0d4f86;--border: #d8e0ea}*,*:before,*:after{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:var(--bg);transition:background-color .2s ease,color .2s ease}a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hover);text-decoration:underline}main{max-width:720px;margin:0 auto;padding:2rem 1.25rem 4rem}h1{font-size:1.75rem;font-weight:600;letter-spacing:-.02em;margin:0 0 1rem}h2{font-size:1.2rem;margin:1.75rem 0 .75rem}p{margin:.75rem 0;color:var(--muted)}code{font-family:ui-monospace,Cascadia Code,monospace;font-size:.9em;background:var(--surface);padding:.15em .4em;border-radius:4px}pre{background:var(--surface);padding:1rem;border-radius:var(--radius);overflow-x:auto}pre code{padding:0;background:none}.site-header{border-bottom:1px solid var(--border);background:var(--surface)}.site-nav{max-width:720px;margin:0 auto;padding:1rem 1.25rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}.theme-toggle{margin-left:auto;padding:.4rem .8rem;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.9rem}.theme-toggle:hover{background:var(--surface)}
+.blog-footer[data-astro-cid-pasjzvzq]{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);text-align:center}.blog-footer__label[data-astro-cid-pasjzvzq]{margin:0 0 .35rem;font-size:.85rem;color:var(--muted)}.blog-footer__name[data-astro-cid-pasjzvzq]{margin:0;font-size:1rem;font-weight:600;color:var(--text);letter-spacing:.02em}
+.prose[data-astro-cid-7jjqptxk] h1,.prose[data-astro-cid-7jjqptxk] h2,.prose[data-astro-cid-7jjqptxk] h3,.prose[data-astro-cid-7jjqptxk] h4,.prose[data-astro-cid-7jjqptxk] h5,.prose[data-astro-cid-7jjqptxk] h6{color:var(--text);margin-top:1.75rem;margin-bottom:.75rem;line-height:1.35}.prose[data-astro-cid-7jjqptxk] h2{color:var(--text)}.prose[data-astro-cid-7jjqptxk] p{color:var(--text);margin:.8rem 0}.prose[data-astro-cid-7jjqptxk] li{color:var(--text);margin:.25rem 0}.prose[data-astro-cid-7jjqptxk] ul,.prose[data-astro-cid-7jjqptxk] ol{padding-left:1.25rem;margin:.75rem 0}.prose[data-astro-cid-7jjqptxk] a{color:var(--accent);text-decoration:underline;text-underline-offset:2px}.prose[data-astro-cid-7jjqptxk] a:hover{color:var(--accent-hover)}.prose[data-astro-cid-7jjqptxk] blockquote{margin:1rem 0;padding:.5rem 1rem;border-left:4px solid var(--border);background:var(--surface);color:var(--muted)}.prose[data-astro-cid-7jjqptxk] hr{border:0;border-top:1px solid var(--border);margin:1.5rem 0}.prose[data-astro-cid-7jjqptxk] table{width:100%;border-collapse:collapse;margin:1rem 0;display:block;overflow-x:auto}.prose[data-astro-cid-7jjqptxk] th,.prose[data-astro-cid-7jjqptxk] td{border:1px solid var(--border);padding:.5rem .75rem;text-align:left}.prose[data-astro-cid-7jjqptxk] th{background:var(--surface);color:var(--text)}.prose[data-astro-cid-7jjqptxk] code{font-family:ui-monospace,Cascadia Code,monospace;font-size:.9em;background:var(--surface);padding:.15em .4em;border-radius:4px}.prose[data-astro-cid-7jjqptxk] pre{background:var(--surface);padding:1rem;border-radius:var(--radius);overflow-x:auto}.prose[data-astro-cid-7jjqptxk] pre code{padding:0;background:none}.prose[data-astro-cid-7jjqptxk] img{max-width:100%;height:auto;border-radius:var(--radius)}.prose[data-astro-cid-7jjqptxk] input[type=checkbox]{transform:translateY(1px)}
+</style></head> <body> <header class="site-header"> <nav class="site-nav"> <a href="/personal-blog/" style="font-weight: 600; color: var(--text); text-decoration: none;">
+我的博客
+</a> <a href="/personal-blog/">文章列表</a> <a href="/personal-blog/publish">发表文章</a> <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换主题">
+切换亮/暗
+</button> </nav> </header> <main>  <article data-astro-cid-7jjqptxk> <p style="margin-bottom: 0.5rem;" data-astro-cid-7jjqptxk> <a href="/personal-blog/" data-astro-cid-7jjqptxk>← 返回列表</a> </p> <h1 data-astro-cid-7jjqptxk>量化策略“去未来函数”全过程实录：从“漂亮回测”到可信实盘</h1> <p style="margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem;" data-astro-cid-7jjqptxk>
+发布于
+<time datetime="2026-05-06T00:00:00.000Z" data-astro-cid-7jjqptxk> 2026年5月6日 </time>  · 更新于 <time datetime="2026-05-18T00:00:00.000Z" data-astro-cid-7jjqptxk> 2026年5月18日 </time>  </p> <div class="prose" data-astro-cid-7jjqptxk> <h2 id="一研究背景回测太漂亮的正反两面">一、研究背景：回测“太漂亮”的正反两面</h2>
+<p>在量化社区，一套高收益低回撤的回测曲线往往令人兴奋，但经验丰富的开发者第一反应通常是：<strong>是否存在未来函数？是否使用了回测当时不可见的信息？</strong></p>
+<p>本次研究的对象是烟花大佬开源的“五福”ETF轮动策略。原版在10年回测中取得了<strong>约83倍（8340%）的总收益、最大回撤仅-20.4%</strong> 的优异表现。但经过严格的“防未来函数”修复后，收益率下降至约44倍（4403%），最大回撤升至-25.1%。</p>
+<p>这不意味着策略“变差”了——恰恰相反，<strong>修复后的策略更接近真实可交易环境的表现</strong>，那些被剔除的“超额收益”本质上是不可复现的历史偏差。</p>
+<h2 id="二三层修改思路">二、三层修改思路</h2>
+<p>整个修复方案围绕三层防御体系展开：</p>
+<h3 id="第一层防穿越">第一层：防穿越</h3>
+<p>防止“回测当天看到了未来上市的ETF”以及“用到当天尚未收盘的数据”导致结果偏乐观。典型问题包括：</p>
+<p>当前全量ETF名单在回测历史年份仍然可用，但那些ETF在当时可能尚未上市（幸存者偏差）；动量排序与弱势判断混入了盘中实时数据，而回测引擎在部分接口上会“偷带”全天信息。</p>
+<h3 id="第二层统一时间基准">第二层：统一时间基准</h3>
+<p>将所有选池构建、弱势判断、动量排序、溢价率计算等全部绑定到<strong>信号日</strong>（上一完整交易日），保证同一时点的信息一致性。回测里“今天13:10做决策”和“今天09:40做走弱判断”存在时序差异，研究环境与回测环境的时间序列对齐问题是最大的坑。</p>
+<h3 id="第三层保留实盘灵活性">第三层：保留实盘灵活性</h3>
+<p>通过开关参数让策略在“保守日线口径（适合回测验证）”和“实时盘中口径（适合实盘决策）”之间切换，而非一刀切地禁用实时数据。核心思想是：<strong>信号慢变量（前收口径） + 风控快变量（实时止损）</strong> 是不冲突的组合。</p>
+<h2 id="三关键修复项及影响">三、关键修复项及影响</h2>
+<h3 id="31-etf可见性过滤">3.1 ETF可见性过滤</h3>
+<p><strong>改动</strong>：新增<code>get_visible_etf_pool()</code>函数，按信号日过滤ETF池，剔除当时尚未上市的标的；<code>get_all_securities(['etf'])</code>改为<code>get_all_securities(['etf'], date=signal_date)</code>，在固定池、全球池、动态池、动量排序等多处调用。</p>
+<p><strong>影响</strong>：这是收益下降的最主要贡献因素。以2026年1月21日为例，研究环境回放显示走弱期全球池从原版的17只变为15只，剔除了2只未来/不可见标的；带历史日期口径后，动态池中每个行业组选出的最高流动性ETF也可能发生变化，历史上存在但后来退市的弱势ETF被纳入候选集。</p>
+<h3 id="32-信号日统一与动量口径切换">3.2 信号日统一与动量口径切换</h3>
+<p><strong>改动</strong>：新增<code>get_signal_date(context)</code>函数，统一定义“信号计算能看到的最新完整交易日”；动量计算通过<code>g.use_previous_close_for_signal</code>开关，支持两种口径：前收口径用历史序列最后一根收盘价；实时口径用<code>hist_closes + current_data.last_price</code>拼接。成交量计算通过<code>g.use_intraday_volume_projection</code>开关，支持两种口径：保守模式用前一日成交量 / 过去N日均量；盘中外推模式用<code>today_vol * (240 / elapsed_minutes) / avg_volume</code>。</p>
+<p><strong>影响</strong>：这两个开关设为<code>False/True</code>时，核心交易信号可基本回退到原版口径，但ETF可见性修复和走弱口径修复仍会改变回测曲线。</p>
+<h3 id="33-走弱期判断修正与回滚">3.3 走弱期判断修正与回滚</h3>
+<p><strong>改动</strong>：走弱状态机判断从<code>attribute_history()</code>改为<code>get_price(..., end_date=signal_date)</code>，以便更精确控制数据时点。</p>
+<p><strong>关键发现——回滚测试</strong>：当我们在研究环境中将代码回滚到<code>attribute_history()</code>口径后，发现研究环境与回测环境在<code>attribute_history</code>的行为上存在根本差异。回测引擎在研究环境的<code>attribute_history</code>中，日线最后一根可能是“含当日未收盘数据的K线”，导致信号日被错误前移。例如，回测在2026年1月21日09:40用沪深300的<strong>1月20日收盘4718.88</strong>判断走弱（3/4低于MA10，进入走弱期）；而研究环境在13:10用<code>attribute_history</code>，末根K线变成了<strong>1月21日收盘4871.91</strong>，4/4站上MA10，判为正常期。这种差异直接导致回测走弱期用15只全球池（最终触发防御买入银华日利），而研究版用141只合并池（继续持有科创板50）。</p>
+<p><strong>最终方案</strong>：将走弱判断的数据获取改为<code>get_price(..., end_date=signal_date)</code>加研究兼容兜底函数，确保两个环境使用完全相同的信号日数据窗口。同时，由于研究版触发点修改，对应的指数数据由之前的偏高（含当日）恢复至与回测一致（纯历史）。</p>
+<h3 id="34-下单执行限制">3.4 下单执行限制</h3>
+<p><strong>改动</strong>：这是执行层面而非信号层面的问题。回测版<code>smart_order_target_value</code>中，当标的处于涨停/跌停状态时会跳过交易，而研究版的<code>_rebalance_to_target</code>早先没有复刻这一限制。</p>
+<p><strong>典型案例</strong>：2026年3月2日，信号日已正确设为2月27日。研究环境的目标持仓计算结果为“日经ETF”，计划卖出“油气ETF”。油气当日价格<strong>1.261</strong>触及涨停价，回测版正确阻止了卖出和后续的买入，而研究版未经此限制，直接卖出了油气并买入日经。这导致研究显示3月2日即换仓，而回测中油气继续持有至3月4日才换为黄金。</p>
+<p><strong>修复后</strong>：在研究版调仓函数中增加涨停/跌停/停牌检查，卖出失败时保留原持仓，买入阶段按实际持仓数判断是否还能买入新目标。</p>
+<h2 id="四研究方法回测-研究对照流水线">四、研究方法：回测-研究对照流水线</h2>
+<p>本次研究的关键方法论突破，在于构建了一套<strong>回测-研究环境对照流水线</strong>。这不仅仅是代码对齐，更是对量化研究过程中信息一致性问题的系统化梳理。</p>
+<h3 id="41-时序对齐策略">4.1 时序对齐策略</h3>
+<p>图1展示了回测与研究的时序一致性要求：</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="mermaid"><code><span class="line"><span style="color:#E1E4E8">flowchart TD</span></span>
+<span class="line"><span style="color:#E1E4E8">    subgraph Y[回测 schedule]</span></span>
+<span class="line"><span style="color:#E1E4E8">        A1["09:00 晨间流水线&#x3C;br>计算全市场ETF流动性阈值"]</span></span>
+<span class="line"><span style="color:#E1E4E8">        A2["09:40 早盘流水线&#x3C;br>走弱期判断 + 池更新"]</span></span>
+<span class="line"><span style="color:#E1E4E8">        A3["13:10 午盘流水线&#x3C;br>动量排序 + 目标生成 + 调仓执行"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    end</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    subgraph J[研究环境适配]</span></span>
+<span class="line"><span style="color:#E1E4E8">        B1["同一执行日流程&#x3C;br>信号日 = 上一交易日&#x3C;br>*禁止依赖未收盘数据*"]</span></span>
+<span class="line"><span style="color:#E1E4E8">        B2["前置判断时点一致&#x3C;br>构建ETF池时剔除不可见标的&#x3C;br>过滤阈值与回测同源"]</span></span>
+<span class="line"><span style="color:#E1E4E8">        B3["动量/过滤计算对齐&#x3C;br>收盘口径可切换&#x3C;br>涨停/跌停卖出检查"]</span></span>
+<span class="line"><span style="color:#E1E4E8">    end</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E1E4E8">    A1 --> B1</span></span>
+<span class="line"><span style="color:#E1E4E8">    A2 --> B2</span></span>
+<span class="line"><span style="color:#E1E4E8">    A3 --> B3</span></span>
+<span class="line"></span></code></pre>
+<p>回测中走弱判断只在<strong>09:40</strong>跑一次，池更新随之完成；<strong>13:10</strong>不再重新判断走弱，只沿用09:40的状态。因此研究环境也必须按09:00→09:40→13:10的时序分段运行，而不能把所有逻辑堆在13:10一次性执行。为此，研究版实现了<code>run_full_daily_strategy_pipeline</code>函数，按回测的时间节点依次执行各阶段逻辑，确保与回测行为一致。</p>
+<h3 id="42-信号日解析稳定性">4.2 信号日解析稳定性</h3>
+<p>在研究环境中，<strong><code>get_trade_days(end_date=当日, count=N)</code>的行为与回测环境不一致</strong>是最隐蔽的坑。该函数在某些情况下返回的顺序不一定与回测相同，且<code>count</code>参数的含义在不同环境下可能有差异（是“截至end的最后N天”还是“从数据起点数N根”）。为了规避此问题，研究版经历了多次迭代：从最初的<code>td[0]</code>假设前一个是上一日，到显式截取日历窗口内的交易日列表，到最终方案——由回放循环直接传入上一个交易日作为<code>signal_date</code>。</p>
+<pre class="astro-code github-dark" style="background-color:#24292e;color:#e1e4e8; overflow-x: auto;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#F97583">for</span><span style="color:#E1E4E8"> idx, trade_date </span><span style="color:#F97583">in</span><span style="color:#79B8FF"> enumerate</span><span style="color:#E1E4E8">(days_list):</span></span>
+<span class="line"><span style="color:#E1E4E8">    signal_date </span><span style="color:#F97583">=</span><span style="color:#E1E4E8"> days_list[idx </span><span style="color:#F97583">-</span><span style="color:#79B8FF"> 1</span><span style="color:#E1E4E8">] </span><span style="color:#F97583">if</span><span style="color:#E1E4E8"> idx </span><span style="color:#F97583">></span><span style="color:#79B8FF"> 0</span><span style="color:#F97583"> else</span><span style="color:#79B8FF"> None</span></span>
+<span class="line"><span style="color:#E1E4E8">    run_full_daily_strategy_pipeline(context, trade_date, </span><span style="color:#FFAB70">signal_date</span><span style="color:#F97583">=</span><span style="color:#E1E4E8">signal_date)</span></span>
+<span class="line"></span></code></pre>
+<p>这样彻底绕过了对聚宽接口语义的依赖，保证了信号日解析的确定性。</p>
+<h3 id="43-状态持续性验证">4.3 状态持续性验证</h3>
+<p>回测中<code>g.is_a_share_weak</code>、<code>g.merged_etf_pool</code>、<code>g.filtered_global_pool</code>等状态在一天内只设定一次，后续不再变更。研究环境需要模拟这一状态持续性，确保13:10使用的池子正是09:40构建的结果，而非13:10重新计算得到的（可能不同的）结果。研究版通过将走弱判断和池构建放在09:40阶段，在13:10阶段直接使用已构建的池子，保证了这一点。</p>
+<h2 id="五回测性能变化与对照分析">五、回测性能变化与对照分析</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>综合指标</th><th>原版</th><th>修复版</th></tr></thead><tbody><tr><td>10年总收益</td><td>~8340%</td><td>~4403%</td></tr><tr><td>最大回撤</td><td>~-20.4%</td><td>~-25.1%</td></tr></tbody></table>
+<p><strong>差异来源归因</strong>：</p>
+<ol>
+<li><strong>ETF可见性过滤</strong>：过去十年的候选池中，删除了若干只在回测区间末尾才出现的标的，历史穿越收益被剔除。当候选池变化，特定日期的目标ETF也不同。</li>
+<li><strong>走弱期进入时机</strong>：原版在09:40用<code>attribute_history</code>，某些边界日期（指数刚好在MA10上下）的走弱/正常判定存在偏差，可能导致防守切换的节奏变化。</li>
+<li><strong>下单执行细化</strong>：研究对照中发现的涨停/跌停限制，说明部分回测超额可能来自“看似成交、实盘无法执行”的场景，修复后收益回调也是合理现象。</li>
+</ol>
+<p>虽然收益率下降、回撤率升高，但<strong>修复后的曲线更接近真实可交易环境</strong>。这并不意味着策略失效——44倍10年收益依然是非常优秀的策略表现，而更高的可信度意味着实盘部署时不会出现大幅偏差。</p>
+<h2 id="六总结与展望">六、总结与展望</h2>
+<h3 id="核心收获">核心收获</h3>
+<ol>
+<li>
+<p><strong>未来函数不是非黑即白</strong>。用实时价和盘中量做13:10决策<strong>不是未来函数</strong>（只要数据确实截至当时可见），但把动量排序全部绑在“上一交易日收盘口径”上，回测/实盘一致性更高。两套口径通过开关保留而非互斥，是最务实的设计。</p>
+</li>
+<li>
+<p><strong>聚宽回测与研究环境的行为差异需要主动验证</strong>，不能假设同一段代码在两个环境下跑出来的结果一致。<code>get_trade_days</code>的排序语义、<code>attribute_history</code>的日线截止规则、<code>get_all_securities</code>的历史日期支持，都可能在研究环境下产生不同结果。</p>
+</li>
+<li>
+<p><strong>执行层面与信号层面同等重要</strong>。3月2日油气因涨停无法卖出、因此继续持有至3月4日的案例，说明“目标持仓”不等于“实际持仓”，<strong>下单限制是策略回测的最后一道防线</strong>，如果研究版忽略它，整个对照结果就会偏离。</p>
+</li>
+<li>
+<p><strong>参数不是越多越好</strong>。原版V5.0中25日动量、R²>0.4、量比&#x3C;1.8、MA10、3日跌幅等多重硬阈值参数，如果缺乏滚动样本外验证，极易把历史行情特征拟合进去。修复未来函数只是第一步，后续参数鲁棒性测试和分市场阶段验证同样是重要方向。</p>
+</li>
+</ol>
+<h3 id="下一步方向">下一步方向</h3>
+<ul>
+<li>对过滤参数进行<strong>滚动窗口优化</strong>与<strong>样本外验证</strong>，避免过度依赖固定阈值</li>
+<li>将选池、打分、过滤、下单<strong>拆分为可独立测试的纯函数</strong>，降低耦合度</li>
+<li>增加完整的信号落盘日志，记录每只ETF被淘汰的具体原因</li>
+<li>分市场阶段（牛市/熊市/震荡）验证参数稳定性</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>致谢</strong>：本文基于烟花大佬开源的五福策略代码进行分析与优化，感谢开源社区的知识分享。研究过程中的关键讨论由 AI 辅助完成策略对比、逻辑梳理、代码修改和问题定位。</p>
+</blockquote>
+<hr>
+<p><em>以上内容为个人研究记录，不构成任何投资建议。量化有风险，实盘需谨慎。</em></p> </div> <aside class="blog-footer" aria-label="公众号" data-astro-cid-pasjzvzq> <p class="blog-footer__label" data-astro-cid-pasjzvzq>欢迎关注公众号</p> <p class="blog-footer__name" data-astro-cid-pasjzvzq>尿布与K线 · NappyQuanter</p> </aside>  </article>  </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
+由 Astro 构建 · 部署在 GitHub Pages
+</footer> <script>
+      const root = document.documentElement;
+      const btn = document.getElementById('theme-toggle');
+      btn?.addEventListener('click', () => {
+        const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+        root.dataset.theme = next;
+        localStorage.setItem('theme', next);
+      });
+    </script> </body> </html> 

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BlogFooter from '../../components/BlogFooter.astro';
 import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -50,6 +51,7 @@ const sameDay = updatedAt.toDateString() === post.data.date.toDateString();
     <div class="prose">
       <Content />
     </div>
+    <BlogFooter />
   </article>
 </BaseLayout>
 
