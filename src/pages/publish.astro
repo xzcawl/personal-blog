@@ -1,18 +1,30 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const defaultApiOrigin =
+  process.env.BLOG_API_ORIGIN || process.env.BLOG_SITE || '';
 ---
 
 <BaseLayout title="发表文章" description="撰写并发布 Markdown 文章">
   <h1>发表文章</h1>
   <p>
-    在下方填写内容后，可<strong>直接发布</strong>到服务器（保存 Markdown、自动构建、立即上线），或下载
-    .md 文件后在本地开发环境提交。
+    在下方填写内容后，可<strong>直接发布</strong>到云服务器（保存 Markdown、自动构建、立即上线）。若在
+    GitHub Pages 打开本页，请将 <strong>API 地址</strong> 设为 <code>http://120.48.157.95:8080</code>。
   </p>
 
   <form
     id="publish-form"
     style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"
   >
+    <label style="display: flex; flex-direction: column; gap: 0.35rem;">
+      <span style="font-weight: 600; color: var(--text);">API 地址（云服务器 Node 服务）</span>
+      <input
+        id="field-api"
+        type="url"
+        placeholder="http://120.48.157.95:8080"
+        style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 420px;"
+      />
+    </label>
     <label style="display: flex; flex-direction: column; gap: 0.35rem;">
       <span style="font-weight: 600; color: var(--text);">发布密钥（首次填写后会记住）</span>
       <input
@@ -139,14 +151,42 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     <p id="upload-msg" style="min-height: 1.5rem; margin: 0.75rem 0 0; font-size: 0.9rem;"></p>
   </section>
 
-  <script>
+  <script define:vars={{ defaultApiOrigin }}>
     const TOKEN_KEY = 'blog-publish-token';
+    const API_KEY = 'blog-api-origin';
 
-    /** fetch 的 Header 仅支持 ISO-8859-1，密钥勿放 Authorization，改用 query */
-    function withToken(url, token) {
-      const u = new URL(url, location.origin);
+    function getApiOrigin() {
+      const input = document.getElementById('field-api');
+      const value = input && 'value' in input ? input.value.trim().replace(/\/$/, '') : '';
+      if (value) localStorage.setItem(API_KEY, value);
+      const saved = localStorage.getItem(API_KEY) || '';
+      if (saved) return saved.replace(/\/$/, '');
+      if (defaultApiOrigin) return defaultApiOrigin.replace(/\/$/, '');
+      if (location.hostname.includes('github.io')) return 'http://120.48.157.95:8080';
+      return location.origin;
+    }
+
+    function apiEndpoint(path, token, extraParams) {
+      const u = new URL(path, getApiOrigin() + '/');
       u.searchParams.set('token', token);
-      return u.pathname + u.search;
+      if (extraParams) {
+        for (const [key, value] of Object.entries(extraParams)) {
+          u.searchParams.set(key, value);
+        }
+      }
+      return u.toString();
+    }
+
+    async function parseJsonResponse(res) {
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        const hint = text.trimStart().startsWith('<')
+          ? '服务器返回了 HTML 而非 API，请确认 API 地址为 http://120.48.157.95:8080 且已运行 npm start'
+          : '服务器返回了非 JSON 响应';
+        throw new Error(hint);
+      }
     }
 
     function escapeYaml(s) {
@@ -210,21 +250,26 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         msgEl.style.color = 'var(--muted)';
       }
       try {
-        const res = await fetch(withToken('/api/blog/publish', token), {
+        const res = await fetch(apiEndpoint('/api/blog/publish', token), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(result),
         });
-        const data = await res.json();
+        const data = await parseJsonResponse(res);
         if (!res.ok || !data.success) {
           throw new Error(data.error || '发布失败');
         }
+        const articleUrl = data.url.startsWith('http')
+          ? data.url
+          : getApiOrigin() + data.url;
         if (msgEl) {
           msgEl.innerHTML =
             '发布成功！<a href="' +
-            data.url +
+            articleUrl +
             '" style="color: var(--accent);">查看文章</a> · ' +
-            '<a href="/" style="color: var(--accent);">返回列表</a>';
+            '<a href="' +
+            getApiOrigin() +
+            '/" style="color: var(--accent);">返回列表</a>';
           msgEl.style.color = 'var(--muted)';
         }
       } catch (err) {
@@ -239,9 +284,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     const form = document.getElementById('publish-form');
     const msg = document.getElementById('msg');
     const tokenInput = document.getElementById('field-token');
+    const apiInput = document.getElementById('field-api');
     const savedToken = localStorage.getItem(TOKEN_KEY);
+    const savedApi = localStorage.getItem(API_KEY);
     if (tokenInput && 'value' in tokenInput && savedToken) {
       tokenInput.value = savedToken;
+    }
+    if (apiInput && 'value' in apiInput) {
+      apiInput.value = savedApi || defaultApiOrigin || '';
     }
 
     document.getElementById('btn-publish')?.addEventListener('click', async () => {
@@ -325,24 +375,28 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       }
       try {
         const content = await file.text();
-        const params = new URLSearchParams({
-          category,
-          filename: file.name,
-          token,
-        });
-        const res = await fetch('/api/blog/upload?' + params.toString(), {
-          method: 'POST',
-          headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
-          body: content,
-        });
-        const data = await res.json();
+        const res = await fetch(
+          apiEndpoint('/api/blog/upload', token, {
+            category,
+            filename: file.name,
+          }),
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+            body: content,
+          },
+        );
+        const data = await parseJsonResponse(res);
         if (!res.ok || !data.success) {
           throw new Error(data.error || '上传失败');
         }
+        const articleUrl = data.url.startsWith('http')
+          ? data.url
+          : getApiOrigin() + data.url;
         if (uploadMsg) {
           uploadMsg.innerHTML =
             '上传成功！<a href="' +
-            data.url +
+            articleUrl +
             '" style="color: var(--accent);">查看文章</a>';
           uploadMsg.style.color = 'var(--muted)';
         }

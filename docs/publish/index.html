@@ -6,14 +6,14 @@
         document.documentElement.dataset.theme = theme;
       })();
     </script><style>:root{--bg: #0f1419;--surface: #1a2332;--text: #e7edf4;--muted: #8b9cb3;--accent: #5b9fd4;--accent-hover: #7eb8e8;--border: #2a3a4d;--radius: 10px;font-family:Segoe UI,system-ui,-apple-system,sans-serif;line-height:1.6;color:var(--text);background:var(--bg)}:root[data-theme=light]{--bg: #f6f8fb;--surface: #ffffff;--text: #1a2433;--muted: #4b617b;--accent: #1769aa;--accent-hover: #0d4f86;--border: #d8e0ea}*,*:before,*:after{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--text);background:var(--bg);transition:background-color .2s ease,color .2s ease}a{color:var(--accent);text-decoration:none}a:hover{color:var(--accent-hover);text-decoration:underline}main{max-width:720px;margin:0 auto;padding:2rem 1.25rem 4rem}h1{font-size:1.75rem;font-weight:600;letter-spacing:-.02em;margin:0 0 1rem}h2{font-size:1.2rem;margin:1.75rem 0 .75rem}p{margin:.75rem 0;color:var(--muted)}code{font-family:ui-monospace,Cascadia Code,monospace;font-size:.9em;background:var(--surface);padding:.15em .4em;border-radius:4px}pre{background:var(--surface);padding:1rem;border-radius:var(--radius);overflow-x:auto}pre code{padding:0;background:none}.site-header{border-bottom:1px solid var(--border);background:var(--surface)}.site-nav{max-width:720px;margin:0 auto;padding:1rem 1.25rem;display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap}.theme-toggle{margin-left:auto;padding:.4rem .8rem;border-radius:var(--radius);border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.9rem}.theme-toggle:hover{background:var(--surface)}
-</style><script type="module" src="/personal-blog/_astro/hoisted.CL8vatKn.js"></script></head> <body> <header class="site-header"> <nav class="site-nav"> <a href="/personal-blog/" style="font-weight: 600; color: var(--text); text-decoration: none;">
+</style></head> <body> <header class="site-header"> <nav class="site-nav"> <a href="/personal-blog/" style="font-weight: 600; color: var(--text); text-decoration: none;">
 我的博客
 </a> <a href="/personal-blog/">文章列表</a> <a href="/personal-blog/publish">发表文章</a> <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换主题">
 切换亮/暗
 </button> </nav> </header> <main>  <h1>发表文章</h1> <p>
-在下方填写内容后，可<strong>直接发布</strong>到服务器（保存 Markdown、自动构建、立即上线），或下载
-    .md 文件后在本地开发环境提交。
-</p> <form id="publish-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">发布密钥（首次填写后会记住）</span> <input id="field-token" type="password" placeholder="与服务器 BLOG_TOKEN 一致" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 420px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">分类目录</span> <select id="field-category" required style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 320px;"> <option value="quant">量化（quant）</option> <option value="travel">旅游（travel）</option> <option value="life">生活（life）</option> </select> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">标题</span> <input id="field-title" type="text" required placeholder="文章标题" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">URL 文件名（英文、连字符）</span> <input id="field-slug" type="text" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="my-new-post" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">摘要（可选）</span> <input id="field-description" type="text" placeholder="一句话简介" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">发布日期</span> <input id="field-date" type="date" required style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">更新日期（可选）</span> <input id="field-updated" type="date" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">正文（Markdown）</span> <textarea id="field-body" required rows="16" placeholder="在这里写 Markdown 正文..." style="padding: 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.95rem; font-family: ui-monospace, monospace; resize: vertical;"></textarea> </label> <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;"> <button type="button" id="btn-publish" style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: none; background: var(--accent); color: #0f1419; font-weight: 600; cursor: pointer; font-size: 1rem;">
+在下方填写内容后，可<strong>直接发布</strong>到云服务器（保存 Markdown、自动构建、立即上线）。若在
+    GitHub Pages 打开本页，请将 <strong>API 地址</strong> 设为 <code>http://120.48.157.95:8080</code>。
+</p> <form id="publish-form" style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">API 地址（云服务器 Node 服务）</span> <input id="field-api" type="url" placeholder="http://120.48.157.95:8080" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 420px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">发布密钥（首次填写后会记住）</span> <input id="field-token" type="password" placeholder="与服务器 BLOG_TOKEN 一致" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 420px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">分类目录</span> <select id="field-category" required style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 320px;"> <option value="quant">量化（quant）</option> <option value="travel">旅游（travel）</option> <option value="life">生活（life）</option> </select> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">标题</span> <input id="field-title" type="text" required placeholder="文章标题" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">URL 文件名（英文、连字符）</span> <input id="field-slug" type="text" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" placeholder="my-new-post" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">摘要（可选）</span> <input id="field-description" type="text" placeholder="一句话简介" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">发布日期</span> <input id="field-date" type="date" required style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">更新日期（可选）</span> <input id="field-updated" type="date" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem; max-width: 200px;"> </label> <label style="display: flex; flex-direction: column; gap: 0.35rem;"> <span style="font-weight: 600; color: var(--text);">正文（Markdown）</span> <textarea id="field-body" required rows="16" placeholder="在这里写 Markdown 正文..." style="padding: 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 0.95rem; font-family: ui-monospace, monospace; resize: vertical;"></textarea> </label> <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;"> <button type="button" id="btn-publish" style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: none; background: var(--accent); color: #0f1419; font-weight: 600; cursor: pointer; font-size: 1rem;">
 直接发布
 </button> <button type="submit" style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-size: 1rem;">
 下载 .md 文件
@@ -21,7 +21,275 @@
 复制全文
 </button> </div> <p id="msg" style="min-height: 1.5rem; margin: 0; font-size: 0.9rem;"></p> </form> <section style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);"> <h2 style="font-size: 1.1rem; margin: 0 0 1rem;">或直接上传已有 .md 文件</h2> <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center;"> <select id="upload-category" style="padding: 0.65rem 0.85rem; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-size: 1rem;"> <option value="quant">量化（quant）</option> <option value="travel">旅游（travel）</option> <option value="life">生活（life）</option> </select> <input id="upload-file" type="file" accept=".md,text/markdown"> <button type="button" id="btn-upload" style="padding: 0.65rem 1.25rem; border-radius: var(--radius); border: none; background: var(--accent); color: #0f1419; font-weight: 600; cursor: pointer; font-size: 1rem;">
 上传并发布
-</button> </div> <p id="upload-msg" style="min-height: 1.5rem; margin: 0.75rem 0 0; font-size: 0.9rem;"></p> </section>   </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
+</button> </div> <p id="upload-msg" style="min-height: 1.5rem; margin: 0.75rem 0 0; font-size: 0.9rem;"></p> </section> <script>(function(){const defaultApiOrigin = "";
+
+    const TOKEN_KEY = 'blog-publish-token';
+    const API_KEY = 'blog-api-origin';
+
+    function getApiOrigin() {
+      const input = document.getElementById('field-api');
+      const value = input && 'value' in input ? input.value.trim().replace(/\/$/, '') : '';
+      if (value) localStorage.setItem(API_KEY, value);
+      const saved = localStorage.getItem(API_KEY) || '';
+      if (saved) return saved.replace(/\/$/, '');
+      if (defaultApiOrigin) return defaultApiOrigin.replace(/\/$/, '');
+      if (location.hostname.includes('github.io')) return 'http://120.48.157.95:8080';
+      return location.origin;
+    }
+
+    function apiEndpoint(path, token, extraParams) {
+      const u = new URL(path, getApiOrigin() + '/');
+      u.searchParams.set('token', token);
+      if (extraParams) {
+        for (const [key, value] of Object.entries(extraParams)) {
+          u.searchParams.set(key, value);
+        }
+      }
+      return u.toString();
+    }
+
+    async function parseJsonResponse(res) {
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        const hint = text.trimStart().startsWith('<')
+          ? '服务器返回了 HTML 而非 API，请确认 API 地址为 http://120.48.157.95:8080 且已运行 npm start'
+          : '服务器返回了非 JSON 响应';
+        throw new Error(hint);
+      }
+    }
+
+    function escapeYaml(s) {
+      return s.replace(/"/g, '\\"');
+    }
+
+    function getToken() {
+      const input = document.getElementById('field-token');
+      const value = input && 'value' in input ? input.value.trim() : '';
+      if (value) localStorage.setItem(TOKEN_KEY, value);
+      return value || localStorage.getItem(TOKEN_KEY) || '';
+    }
+
+    function buildMarkdown() {
+      const titleEl = document.getElementById('field-title');
+      const slugEl = document.getElementById('field-slug');
+      const categoryEl = document.getElementById('field-category');
+      const descEl = document.getElementById('field-description');
+      const dateEl = document.getElementById('field-date');
+      const updatedEl = document.getElementById('field-updated');
+      const bodyEl = document.getElementById('field-body');
+      if (!titleEl || !slugEl || !categoryEl || !dateEl || !bodyEl) return null;
+
+      const title = titleEl.value.trim();
+      const slug = slugEl.value.trim().toLowerCase();
+      const category = categoryEl.value;
+      const description = descEl ? descEl.value.trim() : '';
+      const date = dateEl.value;
+      const updated = updatedEl ? updatedEl.value : '';
+      const body = bodyEl.value.trim();
+
+      if (!title || !slug || !date || !body) return null;
+
+      const descLine = description
+        ? `description: "${escapeYaml(description)}"\n`
+        : '';
+      const updatedLine = updated ? `updated: ${updated}\n` : '';
+      const content =
+        '---\n' +
+        `title: "${escapeYaml(title)}"\n` +
+        `date: ${date}\n` +
+        updatedLine +
+        descLine +
+        '---\n\n' +
+        body +
+        '\n';
+      return { filename: slug + '.md', content, category };
+    }
+
+    async function publishToServer(result, msgEl) {
+      const token = getToken();
+      if (!token) {
+        if (msgEl) {
+          msgEl.textContent = '请先填写发布密钥（BLOG_TOKEN）。';
+          msgEl.style.color = '#e88';
+        }
+        return;
+      }
+      if (msgEl) {
+        msgEl.textContent = '正在发布并构建站点，请稍候…';
+        msgEl.style.color = 'var(--muted)';
+      }
+      try {
+        const res = await fetch(apiEndpoint('/api/blog/publish', token), {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(result),
+        });
+        const data = await parseJsonResponse(res);
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || '发布失败');
+        }
+        const articleUrl = data.url.startsWith('http')
+          ? data.url
+          : getApiOrigin() + data.url;
+        if (msgEl) {
+          msgEl.innerHTML =
+            '发布成功！<a href="' +
+            articleUrl +
+            '" style="color: var(--accent);">查看文章</a> · ' +
+            '<a href="' +
+            getApiOrigin() +
+            '/" style="color: var(--accent);">返回列表</a>';
+          msgEl.style.color = 'var(--muted)';
+        }
+      } catch (err) {
+        if (msgEl) {
+          msgEl.textContent =
+            err instanceof Error ? err.message : '发布失败，请检查密钥与服务器状态。';
+          msgEl.style.color = '#e88';
+        }
+      }
+    }
+
+    const form = document.getElementById('publish-form');
+    const msg = document.getElementById('msg');
+    const tokenInput = document.getElementById('field-token');
+    const apiInput = document.getElementById('field-api');
+    const savedToken = localStorage.getItem(TOKEN_KEY);
+    const savedApi = localStorage.getItem(API_KEY);
+    if (tokenInput && 'value' in tokenInput && savedToken) {
+      tokenInput.value = savedToken;
+    }
+    if (apiInput && 'value' in apiInput) {
+      apiInput.value = savedApi || defaultApiOrigin || '';
+    }
+
+    document.getElementById('btn-publish')?.addEventListener('click', async () => {
+      const result = buildMarkdown();
+      if (!result) {
+        if (msg) {
+          msg.textContent = '请填写所有必填项，且文件名仅使用小写字母、数字与连字符。';
+          msg.style.color = '#e88';
+        }
+        return;
+      }
+      await publishToServer(result, msg);
+    });
+
+    form?.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const result = buildMarkdown();
+      if (!result || !msg) {
+        if (msg) {
+          msg.textContent =
+            '请填写所有必填项，且文件名仅使用小写字母、数字与连字符。';
+          msg.style.color = '#e88';
+        }
+        return;
+      }
+      const blob = new Blob([result.content], {
+        type: 'text/markdown;charset=utf-8',
+      });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = result.filename;
+      a.click();
+      URL.revokeObjectURL(a.href);
+      msg.textContent = '已下载 ' + result.filename + '。';
+      msg.style.color = 'var(--muted)';
+    });
+
+    document.getElementById('btn-copy')?.addEventListener('click', async () => {
+      const result = buildMarkdown();
+      if (!result || !msg) {
+        if (msg) {
+          msg.textContent = '请填写所有必填项。';
+          msg.style.color = '#e88';
+        }
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(result.content);
+        msg.textContent = '已复制到剪贴板。';
+        msg.style.color = 'var(--muted)';
+      } catch {
+        msg.textContent = '复制失败，请使用下载文件。';
+        msg.style.color = '#e88';
+      }
+    });
+
+    document.getElementById('btn-upload')?.addEventListener('click', async () => {
+      const uploadMsg = document.getElementById('upload-msg');
+      const fileInput = document.getElementById('upload-file');
+      const categoryEl = document.getElementById('upload-category');
+      const token = getToken();
+      if (!token) {
+        if (uploadMsg) {
+          uploadMsg.textContent = '请先填写发布密钥（BLOG_TOKEN）。';
+          uploadMsg.style.color = '#e88';
+        }
+        return;
+      }
+      if (!fileInput || !('files' in fileInput) || !fileInput.files || fileInput.files.length === 0) {
+        if (uploadMsg) {
+          uploadMsg.textContent = '请先选择一个 .md 文件。';
+          uploadMsg.style.color = '#e88';
+        }
+        return;
+      }
+      const file = fileInput.files[0];
+      const category = categoryEl && 'value' in categoryEl ? categoryEl.value : 'quant';
+      if (uploadMsg) {
+        uploadMsg.textContent = '正在上传并构建站点，请稍候…';
+        uploadMsg.style.color = 'var(--muted)';
+      }
+      try {
+        const content = await file.text();
+        const res = await fetch(
+          apiEndpoint('/api/blog/upload', token, {
+            category,
+            filename: file.name,
+          }),
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
+            body: content,
+          },
+        );
+        const data = await parseJsonResponse(res);
+        if (!res.ok || !data.success) {
+          throw new Error(data.error || '上传失败');
+        }
+        const articleUrl = data.url.startsWith('http')
+          ? data.url
+          : getApiOrigin() + data.url;
+        if (uploadMsg) {
+          uploadMsg.innerHTML =
+            '上传成功！<a href="' +
+            articleUrl +
+            '" style="color: var(--accent);">查看文章</a>';
+          uploadMsg.style.color = 'var(--muted)';
+        }
+      } catch (err) {
+        if (uploadMsg) {
+          uploadMsg.textContent =
+            err instanceof Error ? err.message : '上传失败，请检查文件格式与密钥。';
+          uploadMsg.style.color = '#e88';
+        }
+      }
+    });
+
+    const today = new Date().toISOString().slice(0, 10);
+    const dateInput = document.getElementById('field-date');
+    if (dateInput && 'value' in dateInput && !dateInput.value) {
+      dateInput.value = today;
+    }
+    const updatedInput = document.getElementById('field-updated');
+    if (updatedInput && 'value' in updatedInput && !updatedInput.value) {
+      updatedInput.value = today;
+    }
+  })();</script>  </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
 由 Astro 构建
 </footer> <script>
       const root = document.documentElement;
