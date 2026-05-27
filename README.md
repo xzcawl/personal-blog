@@ -1,6 +1,6 @@
-# 个人博客（Astro + GitHub Pages）
+# 个人博客（Astro + 云服务器 / GitHub Pages）
 
-静态个人博客：文章列表、单篇阅读、在浏览器中撰写并下载 Markdown 后提交到仓库即可发布新文章。
+静态个人博客：文章列表、单篇阅读、网页一键发布 Markdown。
 
 ## 本地开发
 
@@ -10,38 +10,109 @@ npm install
 npm run dev
 ```
 
-浏览器打开终端里提示的地址（一般为 `http://localhost:4321/personal-blog/`）。
+浏览器打开终端里提示的地址（GitHub Pages 模式一般为 `http://localhost:4321/personal-blog/`）。
 
-## 部署前必改：站点地址与路径
+## 部署到云服务器（推荐：上传 MD 即生效）
 
-打开 `astro.config.mjs`，把 **`site`** 和 **`base`** 改成与你的 GitHub 仓库一致：
+你的量化 API 已在 `120.48.157.95:3389` 运行；博客占用 **8080** 端口，两者互不干扰。
 
-| 仓库类型 | `site` 示例 | `base` |
-|----------|-------------|--------|
-| 项目站 `https://用户名.github.io/仓库名/` | `https://你的用户名.github.io` | `'/仓库名'`（与仓库名相同，前后有斜杠） |
-| 用户站 `https://用户名.github.io/`（仓库名为 `用户名.github.io`） | `https://你的用户名.github.io` | `'/'` |
+### 1. 上传代码到服务器
 
-修改后执行 `npm run build`，确认无报错再推送。
+```bash
+git clone <你的仓库> /opt/personal-blog
+cd /opt/personal-blog
+npm install
+cp .env.example .env
+# 编辑 .env：设置 BLOG_SITE、BLOG_BASE、BLOG_TOKEN
+npm run build
+```
 
-## 发布到 GitHub Pages
+`.env` 示例（直接 IP 访问）：
 
-1. 在 GitHub 新建仓库，将本目录推送到默认分支 `main`（或 `master`，与工作流里分支一致）。
-2. 仓库 **Settings → Pages → Build and deployment**：Source 选 **GitHub Actions**。
-3. 推送代码后，Actions 中的 **Deploy to GitHub Pages** 会构建并发布；首次需在 **Actions** 里确认工作流已运行成功。
-4. 几分钟后用浏览器访问：`https://你的用户名.github.io/仓库名/`（用户站则为 `https://你的用户名.github.io/`）。
+```env
+BLOG_SITE=http://120.48.157.95:8080
+BLOG_BASE=/
+BLOG_PORT=8080
+BLOG_TOKEN=一串足够长的随机密钥
+```
 
-## 发表新文章
+### 2. 启动服务
 
-1. 打开站点上的 **发表文章** 页面，填写标题、文件名（英文短横线形式）、日期与 Markdown 正文。
-2. 点击 **下载 .md 文件**，将文件保存到本仓库的 `src/content/blog/`。
-3. 提交并推送；GitHub Actions 会重新构建，新文章会出现在首页列表中。
+```bash
+npm start
+# 或用 pm2 常驻：pm2 start npm --name blog -- start
+```
 
-也可直接在 `src/content/blog/` 下新建 `.md` 文件，frontmatter 字段需与 `src/content/config.ts` 中的 schema 一致（`title`、`date`，可选 `description`、`draft`）。
+访问 `http://120.48.157.95:8080/` 即可看到博客。
+
+### 3. Nginx 反代（可选，去掉 URL 里的 :8080）
+
+在云服务器安装 Nginx 后：
+
+```bash
+sudo cp deploy/nginx-blog.conf /etc/nginx/sites-available/blog
+sudo ln -sf /etc/nginx/sites-available/blog /etc/nginx/sites-enabled/
+sudo nginx -t && sudo systemctl reload nginx
+```
+
+之后可用 `http://120.48.157.95/` 访问（无需写端口）。若启用 Nginx，请把 GitHub 跳转页里的地址改成 `http://120.48.157.95/`（见下方）。
+
+### 4. 让 [xzcawl.github.io/personal-blog](https://xzcawl.github.io/personal-blog) 跳转到云服务器
+
+`xzcawl.github.io` 域名由 **GitHub** 托管，云上的 Nginx **无法**直接接管该域名。做法是：在 GitHub Pages 放跳转页，访问旧链接时自动跳到 `120.48.157.95`。
+
+**云服务器**（真实博客）：
+
+```bash
+# .env 用根路径，与跳转目标一致
+BLOG_SITE=http://120.48.157.95:8080
+BLOG_BASE=/
+npm run build && npm start
+```
+
+**GitHub Pages**（仅跳转，推送一次即可）：
+
+```bash
+npm run build:github-redirect
+git add docs && git commit -m "chore: redirect github pages to cloud server"
+git push
+```
+
+推送后，访问 `https://xzcawl.github.io/personal-blog/` 及子路径（如 `/personal-blog/blog/quant/jq2qmt/`）会跳转到 `http://120.48.157.95:8080/...`。
+
+若已配置 Nginx 80 反代，编辑 `deploy/github-redirect/index.html` 与 `404.html`，把 `120.48.157.95:8080` 改为 `120.48.157.95`，再执行 `npm run build:github-redirect` 并推送。
+
+> 自定义域名（非 github.io）：在 DNS 把 A 记录指向 `120.48.157.95`，用 Nginx 反代 8080 即可，无需 GitHub 跳转。
+
+### 5. 发表新文章（一次上传即上线）
+
+1. 打开 **发表文章** 页面
+2. 填写发布密钥（与服务器 `BLOG_TOKEN` 一致，浏览器会记住）
+3. 填写标题、分类、正文，点 **直接发布**；或选择已有 `.md` 点 **上传并发布**
+4. 服务器会自动：保存 Markdown → 构建站点 → 新文章立即出现在首页
+
+API 说明：
+
+- `POST /api/blog/publish` — JSON 发布（表单使用）
+- `POST /api/blog/upload?category=quant&filename=slug.md` — 原始 Markdown 上传
+- 均需请求头 `Authorization: Bearer <BLOG_TOKEN>`
+
+## 部署到 GitHub Pages（旧方式）
+
+打开 `astro.config.mjs` 或通过环境变量设置：
+
+| 仓库类型 | `BLOG_SITE` | `BLOG_BASE` |
+|----------|-------------|-------------|
+| 项目站 | `https://用户名.github.io` | `/personal-blog/` |
+| 用户站 | `https://用户名.github.io` | `/` |
+
+推送后 GitHub Actions 会自动构建发布。此方式 **不能** 网页直发，需下载 .md 后提交仓库。
 
 ## 项目结构（简要）
 
-- `src/pages/index.astro`：文章列表  
-- `src/pages/blog/[...slug].astro`：文章详情  
-- `src/pages/publish.astro`：发表文章（生成 Markdown）  
-- `src/content/blog/`：文章 Markdown 源文件  
-- `.github/workflows/deploy.yml`：GitHub Pages 自动构建部署  
+- `src/pages/index.astro`：文章列表
+- `src/pages/blog/[...slug].astro`：文章详情
+- `src/pages/publish.astro`：发表文章（直发 / 下载 / 上传）
+- `src/content/blog/`：文章 Markdown 源文件
+- `server/index.mjs`：云服务器静态托管 + 发布 API
+- `.github/workflows/deploy.yml`：GitHub Pages 自动构建部署

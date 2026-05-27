@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>跳转中…</title>
+  <script>
+    (function () {
+      var target = 'http://120.48.157.95:8080';
+      var path = location.pathname.replace(/^\/personal-blog\/?/, '/');
+      if (!path.startsWith('/')) path = '/' + path;
+      location.replace(target + path + location.search + location.hash);
+    })();
+  </script>
+</head>
+<body>
+  <p>博客已迁移至云服务器，正在跳转…</p>
+  <p><a href="http://120.48.157.95:8080/">若未自动跳转请点击这里</a></p>
+</body>
+</html>

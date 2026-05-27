@@ -46,10 +46,10 @@ const base = import.meta.env.BASE_URL;
 <BaseLayout title="文章列表" description="个人博客文章列表">
   <h1>文章列表</h1>
   <p style="margin-bottom: 2rem;">
-    共 {posts.length} 篇。请将 Markdown 放到对应目录后执行 <code>npm run publish</code> 构建并推送：
-    <code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）、
-    <code>src/content/blog/life/</code>（生活）。也可用
-    <a href={`${base}publish`}>发表文章</a> 在线编写并下载 .md。
+    共 {posts.length} 篇。云服务器部署后，可在
+    <a href={`${base}publish`}>发表文章</a> 页面直接发布；本地开发时也可将 Markdown 放到
+    <code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）或
+    <code>src/content/blog/life/</code>（生活）后运行 <code>npm run publish</code>。
   </p>
   {
     categoryOrder.map((key) => {

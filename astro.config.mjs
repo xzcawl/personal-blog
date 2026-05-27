@@ -1,12 +1,12 @@
 import { defineConfig } from 'astro/config';
 import remarkGfm from 'remark-gfm';
 
-// GitHub Pages 项目站：将仓库名改为你的仓库名，例如 base: '/personal-blog/'
-// 用户站 username.github.io 请设为 base: '/'
+// 云服务器：在 .env 中设置 BLOG_SITE / BLOG_BASE
+// GitHub Pages 项目站：site=https://用户名.github.io  base=/personal-blog/
 export default defineConfig({
-  site: 'https://xzcawl.github.io',
-  base: '/personal-blog/',
-  outDir: 'docs',
+  site: process.env.BLOG_SITE || 'https://xzcawl.github.io',
+  base: process.env.BLOG_BASE || '/personal-blog/',
+  outDir: process.env.BLOG_OUT_DIR || 'docs',
   markdown: {
     remarkPlugins: [remarkGfm],
   },

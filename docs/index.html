@@ -12,10 +12,10 @@
 </a> <a href="/personal-blog/">文章列表</a> <a href="/personal-blog/publish">发表文章</a> <button id="theme-toggle" type="button" class="theme-toggle" aria-label="切换主题">
 切换亮/暗
 </button> </nav> </header> <main>  <h1>文章列表</h1> <p style="margin-bottom: 2rem;">
-共 5 篇。请将 Markdown 放到对应目录后执行 <code>npm run publish</code> 构建并推送：
-<code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）、
-<code>src/content/blog/life/</code>（生活）。也可用
-<a href="/personal-blog/publish">发表文章</a> 在线编写并下载 .md。
+共 5 篇。云服务器部署后，可在
+<a href="/personal-blog/publish">发表文章</a> 页面直接发布；本地开发时也可将 Markdown 放到
+<code>src/content/blog/quant/</code>（量化）、<code>src/content/blog/travel/</code>（旅游）或
+<code>src/content/blog/life/</code>（生活）后运行 <code>npm run publish</code>。
 </p> <section style="margin-bottom: 2.5rem;"> <h2 style="font-size: 1.25rem; margin: 0 0 1rem; color: var(--text);"> 量化 <span style="font-weight: 400; color: var(--muted); font-size: 0.9rem;">
 （quant）
 </span> </h2> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/quant/jq2qmt/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> 聚宽策略一键搬进QMT？我写了个工具，试了一下还挺香 </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">jq2qmt 工具：聚宽策略自动转 QMT，含 API 兼容层、定时调度与 GBK 双版本发布。</p> <time datetime="2026-05-18T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
@@ -28,7 +28,7 @@
 （life）
 </span> </h2> <ul style="list-style: none; padding: 0; margin: 0;"> <li style="border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 1rem; background: var(--surface);"> <a href="/personal-blog/blog/life/hello-world/" style="font-size: 1.1rem; font-weight: 600; color: var(--text);"> Hello World </a> <p style="margin: 0.5rem 0 0; font-size: 0.95rem;">欢迎使用本博客模板的第一篇示例文章。</p> <time datetime="2026-04-14T00:00:00.000Z" style="display: block; margin-top: 0.5rem; font-size: 0.85rem; color: var(--muted);">
 更新于 2026/4/14 </time> </li> </ul> </section><aside class="blog-footer" aria-label="公众号" data-astro-cid-pasjzvzq> <p class="blog-footer__label" data-astro-cid-pasjzvzq>欢迎关注公众号</p> <p class="blog-footer__name" data-astro-cid-pasjzvzq>尿布与K线 · NappyQuanter</p> </aside>   </main> <footer style="text-align: center; padding: 2rem; color: var(--muted); font-size: 0.875rem;">
-由 Astro 构建 · 部署在 GitHub Pages
+由 Astro 构建
 </footer> <script>
       const root = document.documentElement;
       const btn = document.getElementById('theme-toggle');
