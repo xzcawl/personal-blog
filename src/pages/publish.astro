@@ -142,6 +142,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   <script>
     const TOKEN_KEY = 'blog-publish-token';
 
+    /** fetch 的 Header 仅支持 ISO-8859-1，密钥勿放 Authorization，改用 query */
+    function withToken(url, token) {
+      const u = new URL(url, location.origin);
+      u.searchParams.set('token', token);
+      return u.pathname + u.search;
+    }
+
     function escapeYaml(s) {
       return s.replace(/"/g, '\\"');
     }
@@ -203,12 +210,9 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         msgEl.style.color = 'var(--muted)';
       }
       try {
-        const res = await fetch('/api/blog/publish', {
+        const res = await fetch(withToken('/api/blog/publish', token), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(result),
         });
         const data = await res.json();
@@ -324,13 +328,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
         const params = new URLSearchParams({
           category,
           filename: file.name,
+          token,
         });
         const res = await fetch('/api/blog/upload?' + params.toString(), {
           method: 'POST',
-          headers: {
-            'Content-Type': 'text/markdown; charset=utf-8',
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { 'Content-Type': 'text/markdown; charset=utf-8' },
           body: content,
         });
         const data = await res.json();

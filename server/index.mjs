@@ -84,10 +84,23 @@ function authorize(req) {
 
 function safeFilename(name) {
   const base = name.replace(/\\/g, '/').split('/').pop() || '';
-  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.md$/i.test(base)) {
-    throw new Error('文件名仅允许小写字母、数字、连字符，且必须以 .md 结尾');
+  if (!base || base.includes('..') || !/\.md$/i.test(base)) {
+    throw new Error('无效文件名，须为 .md 且不能包含 ..');
   }
-  return base.toLowerCase();
+  const stem = base.slice(0, -3);
+  if (/^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(stem)) {
+    return stem.toLowerCase() + '.md';
+  }
+  if (!/^[\w.\-\u4e00-\u9fff\u3400-\u4dbf\s]+$/u.test(stem)) {
+    throw new Error('文件名包含非法字符');
+  }
+  return (
+    stem
+      .trim()
+      .replace(/\s+/g, '-')
+      .replace(/\.+/g, '.')
+      .replace(/[^a-zA-Z0-9\u4e00-\u9fff._-]/g, '') + '.md'
+  );
 }
 
 function categoryFromPath(category) {
